@@ -66,11 +66,11 @@ function callAPI($method, $url, $data, $access_token)
     {
         case "POST":
             curl_setopt($curl, CURLOPT_POST, 1);
-            if ($data) curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            if ($data) curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
         case "PUT":
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-            if ($data) curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            if ($data) curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
         default:
             if ($data) $url = sprintf("%s?%s", $url, http_build_query($data));
@@ -115,7 +115,7 @@ function callAPI($method, $url, $data, $access_token)
 	
 	curl_close($curl);
 	
-	if($method == "POST" AND $http_code = 201)
+	if($method == "POST" AND $http_code == 201)
 	{
 		if(preg_match("!\r\n(?:location|URI): *(.*?) *\r\n!", $header, $matches))
 		{
@@ -128,11 +128,8 @@ function callAPI($method, $url, $data, $access_token)
 		}
 		return "";
 	}
-	else
-	{
-		$json = json_decode($body);
-		print_r($json);
-		return $json;
+
+	return json_decode($body);
 	}
 }
 
